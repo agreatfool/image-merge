@@ -39,3 +39,19 @@ $ image-merge-dir -h
 
 ## Examples
 ### Files into one
+```
+# merge test/a.jpg & test/b.jpg into merged_files_0.png and put under current working dir
+$ image-merge-dir -m FILES -f test/a.jpg,test/b.jpg -o ./ -N merged_files_ -t PNG
+```
+
+### Dir files into one
+```
+# merge test/*.jpg|png|... into merged_0.jpg and put under current working dir
+$ image-merge-dir -m DIR_ALL -d test -o ./ -N merged_ -t jpg
+```
+
+### Dir files into several ones
+```
+# merge test/*.jpg|png|... into 3 files: merged_0..2.jpg and put under current working dir
+$ image-merge-dir -m DIR_SEP -d test -o ./ -N merged_ -t jpg -n 3
+```
