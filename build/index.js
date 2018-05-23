@@ -30,6 +30,7 @@ program.version(pkg.version)
 })
     .option('-d, --dir <string>', 'source image files dir')
     .option('-n, --num <number>', 'target files number shall be merged into', parseInt)
+    .option('-l, --locale <string>', 'locale by which file list read from dir sorted, default is en, see https://www.npmjs.com/package/readdir-sorted')
     .option('-o, --output_dir <dir>', 'Output directory')
     .option('-N, --output_name <string>', `output basename, optional, default is ${BASE_NAME}`)
     .option(`-t, --output_type <${BASE_TYPES.join('|')}>`, `output file type, only ${BASE_TYPES.join('|')} supported, default is ${BASE_TYPES[0]} since much smaller`)
@@ -38,6 +39,7 @@ const ARGS_MODE = program.mode === undefined ? undefined : program.mode;
 let ARGS_FILES = program.files === undefined ? [] : program.files;
 const ARGS_DIR = program.dir === undefined ? undefined : program.dir;
 const ARGS_NUM = program.num === undefined ? undefined : program.num;
+const ARGS_LOCALE = program.locale === undefined ? 'en' : program.locale;
 const ARGS_OUTPUT_DIR = program.output_dir === undefined ? undefined : program.output_dir;
 const ARGS_OUTPUT_NAME = program.output_name === undefined ? BASE_NAME : program.output_name;
 const ARGS_OUTPUT_TYPE = program.output_type === undefined ? BASE_TYPES[0] : program.output_type;
@@ -127,12 +129,15 @@ class ImageMergeDir {
     }
     _processFiles() {
         return __awaiter(this, void 0, void 0, function* () {
-            this._mergeFiles(ARGS_FILES, this._genOutputFilePath(0));
+            this._mergeFiles(ARGS_FILES.map(f => `"${f}"`), this._genOutputFilePath(0));
         });
     }
     _processDirAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            const dirFiles = yield readdirSorted(ARGS_DIR);
+            const dirFiles = yield readdirSorted(ARGS_DIR, {
+                locale: ARGS_LOCALE,
+                numeric: true
+            });
             let mergeTargets = [];
             for (const file of dirFiles) {
                 const fullPath = LibPath.join(ARGS_DIR, file);
@@ -140,12 +145,15 @@ class ImageMergeDir {
                     mergeTargets.push(fullPath);
                 }
             }
-            this._mergeFiles(mergeTargets, this._genOutputFilePath(0));
+            this._mergeFiles(mergeTargets.map(f => `"${f}"`), this._genOutputFilePath(0));
         });
     }
     _processDirSep() {
         return __awaiter(this, void 0, void 0, function* () {
-            const dirFiles = yield readdirSorted(ARGS_DIR);
+            const dirFiles = yield readdirSorted(ARGS_DIR, {
+                locale: ARGS_LOCALE,
+                numeric: true
+            });
             let mergeTargets = [];
             for (const file of dirFiles) {
                 const fullPath = LibPath.join(ARGS_DIR, file);
@@ -156,7 +164,7 @@ class ImageMergeDir {
             const dividedTargets = this._divideArrayIntoPiece(mergeTargets, ARGS_NUM);
             let index = 0;
             for (const targets of dividedTargets) {
-                this._mergeFiles(targets, this._genOutputFilePath(index));
+                this._mergeFiles(targets.map(f => `"${f}"`), this._genOutputFilePath(index));
                 index++;
             }
         });
