@@ -47,14 +47,6 @@ const ARGS_OUTPUT_GRID_X_NUM = program.output_grid_x_num === undefined ? undefin
 const ARGS_OUTPUT_GRID_Y_NUM = program.output_grid_y_num === undefined ? undefined : program.output_grid_y_num;
 const ARGS_LOCALE = program.locale === undefined ? 'en' : program.locale;
 let GRID_TYPE = ''; // comes from ARGS_OUTPUT_GRID_X_NUM && ARGS_OUTPUT_GRID_Y_NUM => x1 | 4x | 2x3 ...
-/**
- * 参数列表应该按输入和输出分开：
- * 输入参数需要添加文件夹内，起始文件位置，文件数量，来自由组织源图片组
- *
- * 重新制作参数验证部分，修改后的输入参数的互斥就完全改变了
- *
- * 添加grid图片功能
- */
 class ImageMergeDir {
     run() {
         return __awaiter(this, void 0, void 0, function* () {
